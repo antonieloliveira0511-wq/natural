@@ -17,10 +17,10 @@ local LP = Players.LocalPlayer
 
 --================ GLOBAL SAVE ================--
 getgenv().DCX_SETTINGS = getgenv().DCX_SETTINGS or {
-    AC = false,
+    AC = true,
     AR = false,
-    AFK = false,
-    CPS = 10
+    AFK = true,
+    CPS = 500
 }
 
 local SETTINGS = getgenv().DCX_SETTINGS
@@ -193,3 +193,4 @@ loadstring(game:HttpGet("]] .. SCRIPT_URL .. [["))()]]
 
     TP:Teleport(game.PlaceId, LP)
 end)
+
