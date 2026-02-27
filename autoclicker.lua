@@ -145,17 +145,42 @@ CPSBOX.FocusLost:Connect(function()
     CPSBOX.Text = tostring(SETTINGS.CPS)
 end)
 
---================ SERVER HOP + AUTO EXEC (REAL FIX) ================--
+--================ AUTO EXEC SETUP ================--
+local SCRIPT_URL = "https://raw.githubusercontent.com/antonieloliveira0511-wq/natural/refs/heads/main/autoclicker.lua"
+
+-- Salva configurações em arquivo (funciona no Xeno)
+local function SaveSettings()
+    if writefile then
+        pcall(function()
+            writefile("DCX_AutoExec.lua", [[
+getgenv().DCX_SETTINGS = ]] .. Http:JSONEncode(SETTINGS) .. [[
+getgenv().DCX_LOADED = false
+loadstring(game:HttpGet("]] .. SCRIPT_URL .. [["))()]])
+        end)
+    end
+end
+
+-- Tenta carregar configurações salvas
+if readfile and isfile and isfile("DCX_AutoExec.lua") then
+    pcall(function()
+        loadstring(readfile("DCX_AutoExec.lua"))()
+    end)
+end
+
+--================ SERVER HOP + AUTO EXEC ================--
 task.spawn(function()
     task.wait(240)
 
-    local payload = [[
-        getgenv().DCX_SETTINGS = ]] .. Http:JSONEncode(SETTINGS) .. [[
-        getgenv().DCX_LOADED = false
-        loadstring(game:HttpGet("PASTE_YOUR_SCRIPT_RAW_URL_HERE"))()
-    ]]
+    SaveSettings()
 
-    if queue_on_teleport then
+    local payload = [[
+getgenv().DCX_SETTINGS = ]] .. Http:JSONEncode(SETTINGS) .. [[
+getgenv().DCX_LOADED = false
+loadstring(game:HttpGet("]] .. SCRIPT_URL .. [["))()]]
+
+    if syn and syn.queue_on_teleport then
+        syn.queue_on_teleport(payload)
+    elseif queue_on_teleport then
         queue_on_teleport(payload)
     end
 
