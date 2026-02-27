@@ -141,7 +141,7 @@ end)
 
 CPSBOX.FocusLost:Connect(function()
     local v = tonumber(CPSBOX.Text)
-    if v then SETTINGS.CPS = math.clamp(v,1,500) end
+    if v then SETTINGS.CPS = math.clamp(v,1,1000) end
     CPSBOX.Text = tostring(SETTINGS.CPS)
 end)
 
