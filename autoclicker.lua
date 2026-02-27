@@ -148,24 +148,31 @@ end)
 --================ AUTO EXEC SETUP ================--
 local SCRIPT_URL = "https://raw.githubusercontent.com/antonieloliveira0511-wq/natural/refs/heads/main/autoclicker.lua"
 
--- Salva configurações em arquivo (funciona no Xeno)
+-- Salva configurações
 local function SaveSettings()
     if writefile then
         pcall(function()
-            writefile("DCX_AutoExec.lua", [[
-getgenv().DCX_SETTINGS = ]] .. Http:JSONEncode(SETTINGS) .. [[
-getgenv().DCX_LOADED = false
-loadstring(game:HttpGet("]] .. SCRIPT_URL .. [["))()]])
+            writefile("DCX_Settings.json", Http:JSONEncode(SETTINGS))
         end)
     end
 end
 
--- Tenta carregar configurações salvas
-if readfile and isfile and isfile("DCX_AutoExec.lua") then
+-- Carrega configurações salvas
+if readfile and isfile and isfile("DCX_Settings.json") then
     pcall(function()
-        loadstring(readfile("DCX_AutoExec.lua"))()
+        local data = Http:JSONDecode(readfile("DCX_Settings.json"))
+        for k,v in pairs(data) do
+            SETTINGS[k] = v
+        end
     end)
 end
+
+-- Salva configurações a cada mudança
+task.spawn(function()
+    while task.wait(5) do
+        SaveSettings()
+    end
+end)
 
 --================ SERVER HOP + AUTO EXEC ================--
 task.spawn(function()
